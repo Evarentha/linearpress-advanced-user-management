@@ -1,0 +1,16 @@
+{
+  "name": "advanced-user-management",
+  "version": "1.0.0",
+  "private": true,
+  "description": "LinearPress 高级用户管理插件：注册增强 / 登录限流 / 邮件激活 / 账号注销",
+  "type": "module",
+  "main": "index.ts",
+  "peerDependencies": {
+    "nodemailer": "^6.9.0"
+  },
+  "peerDependenciesMeta": {
+    "nodemailer": {
+      "optional": true
+    }
+  }
+}

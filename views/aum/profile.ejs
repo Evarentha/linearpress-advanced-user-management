@@ -1,0 +1,20 @@
+<!--
+  Author: MoyuZJ
+  Team: LinearTeam
+  Contact: linearteam@foxmail.com
+  个人资料页：展示账号基础信息与邮箱验证状态。
+  注：个人资料扩展（头像/签名等）由「多彩个人资料」插件提供，本插件不含。
+-->
+
+<section class="aum-page"><div class="aum-page-head"><h1>个人资料</h1><a href="/profile/settings">账户设置 →</a></div>
+<div class="aum-card-block">
+  <div class="aum-row"><span class="aum-label">用户名</span><strong><%= user.username %></strong></div>
+  <div class="aum-row"><span class="aum-label">邮箱</span><span><%= user.email || '-' %></span></div>
+  <div class="aum-row"><span class="aum-label">注册时间</span><span><%= new Date(user.created_at).toLocaleString() %></span></div>
+  <% if (emailVerifyEnabled) { %>
+  <div class="aum-row"><span class="aum-label">邮箱验证</span>
+    <% if (verify && verify.verified) { %><span class="aum-badge aum-badge-ok">已验证</span><% } else { %><span class="aum-badge aum-badge-warn">未验证</span><span class="aum-muted">（部分功能受限，请检查注册邮箱中的激活邮件）</span><% } %>
+  </div>
+  <% } %>
+</div>
+</section>

@@ -1,0 +1,84 @@
+<!--
+  Author: MoyuZJ
+  Team: LinearTeam
+  Contact: linearteam@foxmail.com
+  高级用户管理 · 设置表单：限流规则 / 阶梯封禁 / SMTP 邮件验证 / 域名白名单 / 注销冷却。
+-->
+
+<div class="page-head"><h1>高级用户管理 · 设置</h1><a class="button button-mini" href="/admin/advanced-user-management">返回总览</a></div>
+<% const notices = { 'saved': '设置已保存（无需重启，即时生效）。', 'reset': '已恢复默认设置。' }; %>
+<% if (notice && notices[notice]) { %><p class="notice notice-ok"><%= notices[notice] %></p><% } else if (notice && !notices[notice]) { %><p class="notice notice-error"><%= notice %></p><% } %>
+
+<form method="post" action="/admin/advanced-user-management/settings">
+  <div class="panel-summary">
+    <p class="eyebrow">① 注册增强</p>
+    <label class="switch-row"><input type="checkbox" name="require_password_confirmation" <%= config.requirePasswordConfirmation ? 'checked' : '' %>> <span>注册表单启用「确认密码」二次输入（前后端同步校验）</span></label>
+  </div>
+
+  <div class="panel-summary">
+    <p class="eyebrow">② 登录限流与阶梯封禁</p>
+    <label class="switch-row"><input type="checkbox" name="rate_limit_enable" <%= config.rateLimit.enable ? 'checked' : '' %>> <span>启用登录限流</span></label>
+    <table class="aum-rules">
+      <thead><tr><th>窗口（分钟）</th><th>失败阈值（次）</th><th>封禁（分钟）</th></tr></thead>
+      <tbody>
+        <% config.rateLimit.rules.forEach((rule, i) => { const n = i + 1; %>
+        <tr>
+          <td><input type="number" name="rules_<%= n %>_window" value="<%= rule.windowMinutes %>" min="1"></td>
+          <td><input type="number" name="rules_<%= n %>_threshold" value="<%= rule.threshold %>" min="1"></td>
+          <td><input type="number" name="rules_<%= n %>_ban" value="<%= rule.banMinutes %>" min="1"></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <p class="aum-muted">最多可配置三档递增规则；保留空行则忽略该档。<% if (config.rateLimit.rules.length === 0) { %>当前无规则，已自动保留默认档（10 分钟/10 次/15 分钟）。<% } %></p>
+    <div class="aum-field"><label>单日阶梯触发阈值（次）</label><input type="number" name="escalation_trigger_per_day" value="<%= config.rateLimit.escalationTriggerPerDay %>" min="1"></div>
+    <div class="aum-field"><label>阶梯时长（天，用逗号分隔；0 表示永久）</label><input type="text" name="escalation_days" value="<%= config.rateLimit.escalationDays.join(',') %>" placeholder="3,7,0"></div>
+    <label class="switch-row"><input type="checkbox" name="allow_permanent_ban" <%= config.rateLimit.allowPermanentBan ? 'checked' : '' %>> <span>允许永久封禁（关闭时第 3 阶改用下方天数）</span></label>
+    <div class="aum-field"><label>不允许永久封禁时的第 3 阶天数</label><input type="number" name="fallback_days" value="<%= config.rateLimit.fallbackDays %>" min="1"></div>
+  </div>
+
+  <div class="panel-summary">
+    <p class="eyebrow">③ SMTP 邮件激活</p>
+    <label class="switch-row"><input type="checkbox" name="email_verify_enable" <%= config.emailVerify.enable ? 'checked' : '' %>> <span>启用新用户邮箱验证（注册后需点击邮件链接激活）</span></label>
+    <div class="aum-field"><label>SMTP 地址</label><input type="text" name="smtp_host" value="<%= config.emailVerify.smtp.host %>" placeholder="例如 smtp.qq.com"></div>
+    <div class="aum-field"><label>端口</label><input type="number" name="smtp_port" value="<%= config.emailVerify.smtp.port %>" min="1" placeholder="25 / 465 / 587"></div>
+    <div class="aum-field"><label>加密协议</label>
+      <select name="smtp_encryption">
+        <option value="starttls" <%= config.emailVerify.smtp.encryption === 'starttls' ? 'selected' : '' %>>StartTLS</option>
+        <option value="ssl" <%= config.emailVerify.smtp.encryption === 'ssl' ? 'selected' : '' %>>SSL / TLS</option>
+        <option value="none" <%= config.emailVerify.smtp.encryption === 'none' ? 'selected' : '' %>>无</option>
+      </select>
+    </div>
+    <div class="aum-field"><label>账号</label><input type="text" name="smtp_user" value="<%= config.emailVerify.smtp.user %>" placeholder="SMTP 登录账号"></div>
+    <div class="aum-field"><label>密码（留空保持不变）</label><input type="password" name="smtp_password" placeholder="••••••••" autocomplete="off"></div>
+    <div class="aum-field"><label>发件人（默认用账号）</label><input type="email" name="smtp_from" value="<%= config.emailVerify.smtp.from %>" placeholder="no-reply@example.com"></div>
+    <div class="aum-field"><label>验证链接有效期（小时）</label><input type="number" name="token_ttl_hours" value="<%= config.emailVerify.tokenTtlHours %>" min="1"></div>
+
+    <p class="eyebrow">邮箱域名白名单</p>
+    <label class="switch-row"><input type="checkbox" name="whitelist_enable" <%= config.emailVerify.whitelist.enable ? 'checked' : '' %>> <span>仅允许指定后缀注册</span></label>
+    <div class="aum-field"><label>白名单域名（逗号分隔）</label><input type="text" name="whitelist_domains" value="<%= config.emailVerify.whitelist.domains.join(',') %>" placeholder="qq.com,gmail.com"></div>
+
+    <p class="eyebrow">邮件模板</p>
+    <div class="aum-field"><label>模板</label>
+      <select name="mail_template">
+        <option value="default" <%= config.emailVerify.template === 'default' ? 'selected' : '' %>>默认模板</option>
+        <option value="custom" <%= config.emailVerify.template === 'custom' ? 'selected' : '' %>>自定义模板</option>
+      </select>
+    </div>
+    <div class="aum-field"><label>自定义模板 HTML（占位符：{{siteName}} {{username}} {{verifyUrl}} {{siteUrl}}；支持文件上传填充）</label>
+      <textarea name="template_content" rows="8" placeholder="<div>...{{verifyUrl}}...</div>"><%= config.emailVerify.template === 'custom' ? config.emailVerify.templateContent : '' %></textarea>
+      <input type="file" id="aum-template-file" accept=".html,.htm,.txt" data-aum-target="template_content">
+    </div>
+    <p><button type="button" class="button button-mini" id="aum-smtp-test" data-aum-smtp-test data-url="/admin/aum/smtp-test">发送测试邮件</button> <span id="aum-smtp-result" class="aum-muted"></span></p>
+  </div>
+
+  <div class="panel-summary">
+    <p class="eyebrow">⑤ 账号注销</p>
+    <div class="aum-field"><label>批准后冷却期（天）</label><input type="number" name="deletion_cooldown_days" value="<%= config.deletion.cooldownDays %>" min="1"></div>
+    <label class="switch-row"><input type="checkbox" name="deletion_delete_posts" <%= config.deletion.deletePosts ? 'checked' : '' %>> <span>物理注销时一并删除该用户文章（评论随文章删除）</span></label>
+  </div>
+
+  <button class="button" type="submit">保存设置</button>
+</form>
+
+<form method="post" action="/admin/advanced-user-management/settings/reset" style="margin-top:12px"><button class="button button-mini" type="submit" onclick="return confirm('恢复默认设置？')">恢复默认设置</button></form>

@@ -1,0 +1,38 @@
+<!--
+  Author: MoyuZJ
+  Team: LinearTeam
+  Contact: linearteam@foxmail.com
+  账户设置页：注销账号入口与申请状态（需求 5：申请 → 审批 → 冷却 → 物理注销）。
+-->
+
+<section class="aum-page"><div class="aum-page-head"><h1>账户设置</h1><a href="/profile">返回个人资料 →</a></div>
+<% if (notice) { %><p class="aum-notice"><%= notice %></p><% } %>
+
+<div class="aum-card-block">
+  <h2>注销账号</h2>
+  <p class="aum-muted">提交注销申请后需等待管理组批准；批准后进入 <%= cooldownDays %> 天冷却期，冷却期满由系统自动执行物理注销（删除账号及其文章/评论），此操作不可恢复。</p>
+
+  <% const d = deletion; %>
+  <% if (d && d.status === 'pending') { %>
+    <p class="aum-badge aum-badge-warn">注销申请待审批（提交于 <%= new Date(d.requested_at).toLocaleString() %>）</p>
+    <form method="post" action="/profile/cancel-delete"><button class="button" type="submit">撤销注销申请</button></form>
+  <% } else if (d && d.status === 'approved') { %>
+    <p class="aum-badge aum-badge-warn">注销申请已批准，冷却期 <strong><%= new Date(d.cooldown_until).toLocaleString() %></strong> 后账号将被永久删除。</p>
+    <p class="aum-muted">若在冷却期内改变主意，可撤销申请。</p>
+    <form method="post" action="/profile/cancel-delete"><button class="button" type="submit">撤销注销申请</button></form>
+  <% } else if (d && d.status === 'rejected') { %>
+    <p class="aum-badge aum-badge-fail">注销申请已被驳回（<%= new Date(d.approved_at).toLocaleString() %>）。如仍有需要，可重新提交。</p>
+    <form method="post" action="/profile/delete-account"><button class="button button-danger" type="submit">重新申请注销</button></form>
+  <% } else { %>
+    <% if (user.is_super_admin) { %>
+      <p class="aum-badge aum-badge-fail">超级管理员账号不允许注销。</p>
+    <% } else { %>
+      <form method="post" action="/profile/delete-account" class="aum-danger-zone">
+        <label for="delete_reason">注销原因（可选）</label>
+        <textarea id="delete_reason" name="reason" rows="3" placeholder="请简要说明注销原因，将随申请一并提交给管理组"></textarea>
+        <button class="button button-danger" type="submit" data-aum-confirm="提交后无法直接恢复申请，确认继续吗？">提交注销申请</button>
+      </form>
+    <% } %>
+  <% } %>
+</div>
+</section>

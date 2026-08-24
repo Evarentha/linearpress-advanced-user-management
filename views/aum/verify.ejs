@@ -1,0 +1,8 @@
+<!--
+  Author: MoyuZJ
+  Team: LinearTeam
+  Contact: linearteam@foxmail.com
+  邮箱激活结果页。
+-->
+
+<section class="auth aum-verify"><p class="eyebrow">EMAIL VERIFICATION</p><h1><%= ok ? '激活成功' : '激活失败' %></h1><div class="aum-card <%= ok ? 'aum-ok' : 'aum-fail' %>"><p><%= message %></p></div><div class="aum-actions"><% if (ok) { %><a class="button" href="/login">立即登录</a><% } else { %><a href="/profile">前往个人资料</a><a href="/">返回首页</a><% } %></div></section>

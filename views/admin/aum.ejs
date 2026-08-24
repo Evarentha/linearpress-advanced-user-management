@@ -1,0 +1,88 @@
+<!--
+  Author: MoyuZJ
+  Team: LinearTeam
+  Contact: linearteam@foxmail.com
+  高级用户管理 · 后台总览：解封队列 / 注销审批 / 邮箱验证管理。
+-->
+
+<div class="page-head"><h1>账户安全</h1><a class="button button-mini" href="/admin/advanced-user-management/settings">插件设置</a></div>
+<% const notices = { 'released': '已解除该封禁。', 'released-all': '已清空全部封禁记录。', 'approve-ok': '已批准注销申请，进入冷却期。', 'approve-err': '批准失败：申请不存在或状态已变更。', 'reject-ok': '已驳回该注销申请。', 'reject-err': '驳回失败：申请不存在或状态已变更。', 'verified': '已将该用户标记为邮箱已验证。', 'missing': '缺少必要参数。' }; %>
+<% if (notice && notices[notice]) { %><p class="notice notice-ok"><%= notices[notice] %></p><% } %>
+
+<div class="panel-summary">
+  <p class="eyebrow">登录限流</p>
+  <p><%= rateLimitEnabled ? '已启用（10/30/60 分钟窗口，触发 15/60/90 分钟封禁；单日 ≥3 次触发阶梯封禁）' : '未启用' %></p>
+</div>
+
+<h2>解封队列</h2>
+<% if (bans.length === 0) { %>
+  <p class="aum-muted">当前没有激活中的封禁记录。</p>
+<% } else { %>
+  <table>
+    <thead><tr><th>主体</th><th>原因</th><th>开始时间</th><th>剩余</th><th>操作</th></tr></thead>
+    <tbody>
+      <% bans.forEach(ban => { %>
+      <tr>
+        <td><code><%= ban.scope %></code></td>
+        <td><%= ban.reason %></td>
+        <td><%= new Date(ban.banned_at).toLocaleString() %></td>
+        <td><%= ban.permanent ? '永久' : formatRemaining(ban.remaining) %></td>
+        <td><form method="post" action="/admin/aum/ban/release"><input type="hidden" name="id" value="<%= ban.id %>"><button class="button button-mini">立即解封</button></form></td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <form method="post" action="/admin/aum/ban/release-all"><button class="button button-mini" onclick="return confirm('确认清空全部封禁？')">清空全部封禁</button></form>
+<% } %>
+
+<h2>注销审批</h2>
+<% if (deletions.length === 0) { %>
+  <p class="aum-muted">当前没有注销申请。</p>
+<% } else { %>
+  <table>
+    <thead><tr><th>用户</th><th>原因</th><th>状态</th><th>申请时间</th><th>操作</th></tr></thead>
+    <tbody>
+      <% deletions.forEach(item => { %>
+      <tr>
+        <td><%= item.username %> <span class="aum-muted"><%= item.group_name %></span></td>
+        <td><%= item.reason || '—' %></td>
+        <td>
+          <% if (item.status === 'pending') { %><span class="aum-badge aum-badge-warn">待审批</span>
+          <% } else if (item.status === 'approved') { %><span class="aum-badge aum-badge-warn">已批准 · 冷却中（剩余 <%= formatRemaining(item.remaining) %>）</span>
+          <% } else if (item.status === 'rejected') { %><span class="aum-badge aum-badge-fail">已驳回</span>
+          <% } else { %><span class="aum-muted">已撤销</span><% } %>
+        </td>
+        <td><%= new Date(item.requested_at).toLocaleString() %></td>
+        <td>
+          <% if (item.status === 'pending') { %>
+            <form method="post" action="/admin/aum/deletion/approve" style="display:inline"><input type="hidden" name="user_id" value="<%= item.user_id %>"><button class="button button-mini" onclick="return confirm('批准后进入 <%= cooldownDays %> 天冷却期，期满自动删除账号，确认？')">批准（冷却 <%= cooldownDays %> 天）</button></form>
+            <form method="post" action="/admin/aum/deletion/reject" style="display:inline"><input type="hidden" name="user_id" value="<%= item.user_id %>"><button class="button button-mini">驳回</button></form>
+          <% } else { %><span class="aum-muted">—</span><% } %>
+        </td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+<% } %>
+
+<% if (emailVerifyEnabled) { %>
+<h2>邮箱验证管理</h2>
+<table>
+  <thead><tr><th>用户</th><th>邮箱</th><th>状态</th><th>操作</th></tr></thead>
+  <tbody>
+    <% userVerifications.forEach(item => { %>
+    <tr>
+      <td><%= item.username %></td>
+      <td><%= item.email || '-' %></td>
+      <td><% if (item.verified) { %><span class="aum-badge aum-badge-ok">已验证</span><% } else { %><span class="aum-badge aum-badge-warn">未验证</span><% } %></td>
+      <td>
+        <% if (!item.verified) { %>
+          <form method="post" action="/admin/aum/user/<%= item.user_id %>/verify" style="display:inline"><button class="button button-mini">手动标记已验证</button></form>
+          <form method="post" action="/admin/aum/user/<%= item.user_id %>/resend" style="display:inline" data-aum-fetch><button class="button button-mini">重发邮件</button></form>
+        <% } else { %><span class="aum-muted">—</span><% } %>
+      </td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>
+<% } %>
