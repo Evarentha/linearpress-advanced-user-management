@@ -33,8 +33,8 @@
 .aum-menu-name { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .aum-dropdown {
   position: absolute; right: 0; top: calc(100% + 6px); min-width: 160px;
-  background: #fff; border: 1px solid var(--aum-border); border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12); padding: 6px; z-index: 50;
+  background: #fff; border: 1px solid var(--aum-border);
+  padding: 6px; z-index: 50;
   display: none; flex-direction: column; gap: 2px;
 }
 .aum-dropdown[data-open='true'] { display: flex; }
