@@ -37,14 +37,23 @@ const SETTINGS_URL = `${ADMIN_ROOT}/settings`;
 const AUM_PERMISSION = 'aum:manage';
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-function param(value: unknown): string { return Array.isArray(value) ? value[0] ?? '' : String(value ?? ''); }
-function messageOf(error: unknown): string { return error instanceof Error ? error.message : '操作失败'; }
-function asId(value: unknown): number { return Number(value) || 0; }
-const wrap = (fn: (req: Request, res: Response) => unknown) => (req: Request, res: Response, next: NextFunction) => {
+const text = (value: unknown): string => String(value ?? '').trim();
+const param = (value: unknown): string => Array.isArray(value) ? String(value[0] ?? '') : String(value ?? '');
+const asId = (value: unknown): number => Number(value) || 0;
+const messageOf = (error: unknown): string => error instanceof Error ? error.message : '操作失败';
+/** 页面处理器包装：失败时渲染 error 视图（与 Base wrap 语义一致）。 */
+const wrap = (fn: (req: Request, res: Response) => Promise<unknown> | unknown): RequestHandler => (req, res, next) => {
   void Promise.resolve(fn(req, res)).catch((error) => {
     console.error('[advanced-user-management] handler error:', error);
     if (!res.headersSent) res.status(500).render('error', { title: '服务器错误', message: messageOf(error) });
     else next(error);
+  });
+};
+/** JSON API 处理器包装：失败时返回 { ok:false }（与 Base JSON 约定一致）。 */
+const wrapJson = (fn: (req: Request, res: Response) => Promise<unknown> | unknown): RequestHandler => (req, res) => {
+  void Promise.resolve(fn(req, res)).catch((error) => {
+    console.error('[advanced-user-management] handler error:', error);
+    if (!res.headersSent) res.status(500).json({ ok: false, message: messageOf(error) });
   });
 };
 
@@ -64,18 +73,28 @@ export default async function advancedUserManagement(context: Context) {
     const value = await context.config.get();
     return (value?.siteName ?? value?.siteTitle ?? 'LinearPress') as string;
   };
+  /** 站点对外域名：优先使用配置的主域名（防 Host 头投毒），未配置时回退请求 Host。 */
+  const originOf = async (req: Request): Promise<string> => {
+    try {
+      const configured = String(await context.config.get().then((v: unknown) => (v as { primaryDomain?: string })?.primaryDomain ?? '').trim());
+      if (configured) return `${req.protocol}://${configured.replace(/^https?:\/\//i, '').replace(/\/+$/, '')}`;
+    } catch { /* 配置不可用时回退 */ }
+    return `${req.protocol}://${req.get('host')}`;
+  };
 
-  // ------------------------------------------------------------ 中间件
+  // ------------------------------------------------------------ 权限守卫（与 Base requireAuth/checkPermission 同构）
   const requireLogin: RequestHandler = (req, res, next) => {
-    if (!req.session?.userId) return res.redirect(`/login?next=${encodeURIComponent(req.originalUrl || '/')}`);
+    if (!req.session?.userId) return res.redirect('/login');
     next();
   };
-  const requireAum: RequestHandler = async (req, res, next) => {
+  /** 管理端守卫工厂：登录 + aum:manage 权限校验，失败渲染 error 视图。 */
+  const checkAumPermission = (): RequestHandler => async (req, res, next) => {
     if (!req.session?.userId) return res.redirect('/login');
     const allowed = await Promise.resolve(context.permissions.has(req.session.userId, AUM_PERMISSION)).catch(() => false);
     if (!allowed) return res.status(403).render('error', { title: '权限不足', message: '你没有管理账户安全的权限。' });
     next();
   };
+  const requireAum = checkAumPermission();
 
   // ------------------------------------------------------------ 登录限流
   /** 查询距离触发下一步封禁还剩余的尝试次数（跨所有 scope/规则取最小）。 */
@@ -107,8 +126,8 @@ export default async function advancedUserManagement(context: Context) {
   }
 
   const loginHandler: RequestHandler = wrap(async (req, res) => {
-    const username = param(req.body.username);
-    const password = param(req.body.password);
+    const username = text(req.body.username);
+    const password = text(req.body.password);
     const ip = String(req.ip ?? '');
     const scopes = scopesFor(username, ip);
     const now = Date.now();
@@ -141,6 +160,8 @@ export default async function advancedUserManagement(context: Context) {
       }
     }
 
+    // 重建会话防止 Session Fixation。
+    await new Promise<void>((resolve) => req.session.regenerate(() => resolve()));
     req.session.userId = user.id;
     res.redirect('/admin');
   });
@@ -148,10 +169,10 @@ export default async function advancedUserManagement(context: Context) {
   // ------------------------------------------------------------ 注册增强
   const registerHandler: RequestHandler = wrap(async (req, res) => {
     const renderError = (error: string) => res.status(400).render('auth/register', { title: '注册', error });
-    const username = param(req.body.username);
-    const email = param(req.body.email).trim();
-    const password = param(req.body.password);
-    const confirmation = param(req.body.password_confirmation);
+    const username = text(req.body.username);
+    const email = text(req.body.email);
+    const password = text(req.body.password);
+    const confirmation = text(req.body.password_confirmation);
 
     if (config.requirePasswordConfirmation && password !== confirmation) return renderError('两次输入的密码不一致，请重新确认。');
     if (password.length < 8) return renderError('密码至少需要 8 个字符。');
@@ -175,13 +196,13 @@ export default async function advancedUserManagement(context: Context) {
     if (verify.enable) {
       const token = randomUUID().replace(/-/g, '');
       await setVerifyToken(db, user.id, token, Date.now() + verify.tokenTtlHours * 3600 * 1000);
-      const origin = `${req.protocol}://${req.get('host')}`;
+      const origin = await originOf(req);
       try {
         const mail = buildVerificationMail(verify, {
           siteName: await site(),
           username: user.username,
-          verifyUrl: `${origin}/verify?token=${token}`,
-          siteUrl: origin
+          verifyUrl: `${await originOf(req)}/verify?token=${token}`,
+          siteUrl: await originOf(req)
         });
         await sendVerificationMail(verify, user.email ?? '', mail.subject, mail.html);
       } catch (error) {
@@ -327,7 +348,8 @@ export default async function advancedUserManagement(context: Context) {
   });
 
   // 测试 SMTP 连接
-  const smtpTestHandler: RequestHandler = wrap(async (req, res) => {
+  // JSON API 处理器：使用 wrapJson，失败返回 { ok:false }。
+  const smtpTestHandler: RequestHandler = wrapJson(async (req, res) => {
     const probe = parseSettingsForm({ ...req.body, email_verify_enable: 'on', mail_template: 'default' });
     try {
       const mail = buildVerificationMail(probe.emailVerify, { siteName: 'LinearPress', username: '测试', verifyUrl: `${req.protocol}://${req.get('host')}/verify?token=test`, siteUrl: `${req.protocol}://${req.get('host')}` });
@@ -339,7 +361,7 @@ export default async function advancedUserManagement(context: Context) {
   });
 
   // 重发验证邮件
-  const resendVerifyHandler: RequestHandler = wrap(async (req, res) => {
+  const resendVerifyHandler: RequestHandler = wrapJson(async (req, res) => {
     if (!config.emailVerify.enable) return res.status(400).json({ ok: false, message: '邮件验证未启用。' });
     const userId = asId(req.params.id);
     const user = await users.findById(userId);
@@ -349,7 +371,7 @@ export default async function advancedUserManagement(context: Context) {
       ? row.verify_token
       : randomUUID().replace(/-/g, '');
     await setVerifyToken(db, user.id, token, Date.now() + config.emailVerify.tokenTtlHours * 3600 * 1000);
-    const origin = `${req.protocol}://${req.get('host')}`;
+    const origin = await originOf(req);
     try {
       const mail = buildVerificationMail(config.emailVerify, { siteName: await site(), username: user.username, verifyUrl: `${origin}/verify?token=${token}`, siteUrl: origin });
       await sendVerificationMail(config.emailVerify, user.email ?? '', mail.subject, mail.html);

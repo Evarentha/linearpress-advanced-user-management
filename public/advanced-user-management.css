@@ -1,105 +1,46 @@
-/*
- * Author: MoyuZJ
+/* * Author: MoyuZJ
  * Team: LinearTeam
  * Contact: linearteam@foxmail.com
  * 高级用户管理 - 样式
- * 采用 CSS 变量与 site-header 一致的风格；同时注入前台与后台。
- */
-
-:root {
-  --aum-accent: #2563eb;
-  --aum-danger: #dc2626;
-  --aum-warn: #d97706;
-  --aum-ok: #16a34a;
-  --aum-border: #e4e4e7;
-  --aum-text: #18181b;
-  --aum-muted: #71717a;
-}
-
-/* ---------------------------------------------------------------- 前台用户菜单 */
-.aum-user-menu { position: relative; display: inline-flex; }
-.aum-menu-trigger {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: transparent; border: 0; cursor: pointer; padding: 4px 6px;
-  color: inherit; font: inherit; border-radius: 8px;
-}
-.aum-menu-trigger:hover { background: rgba(0, 0, 0, 0.06); }
-.aum-avatar {
-  width: 26px; height: 26px; border-radius: 50%;
-  background: var(--aum-accent); color: #fff;
-  display: inline-flex; align-items: center; justify-content: center;
-  font-size: 13px; font-weight: 700; flex: none;
-}
-.aum-menu-name { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.aum-dropdown {
-  position: absolute; right: 0; top: calc(100% + 6px); min-width: 160px;
-  background: #fff; border: 1px solid var(--aum-border);
-  padding: 6px; z-index: 50;
-  display: none; flex-direction: column; gap: 2px;
-}
-.aum-dropdown[data-open='true'] { display: flex; }
-.aum-dropdown a, .aum-dropdown button {
-  display: block; width: 100%; text-align: left; padding: 9px 12px;
-  border: 0; background: transparent; border-radius: 7px;
-  color: var(--aum-text); text-decoration: none; font-size: 14px; cursor: pointer;
-}
-.aum-dropdown a:hover, .aum-dropdown button:hover { background: #f4f4f5; }
-.aum-dropdown-logout { color: var(--aum-danger) !important; }
-
-/* ---------------------------------------------------------------- 通用提示与省卡 */
-.aum-notice {
-  padding: 10px 14px; border-radius: 8px; margin: 10px 0;
-  background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 14px;
-}
-.aum-card {
-  background: #fff; border: 1px solid var(--aum-border); border-radius: 12px;
-  padding: 18px 20px; margin: 12px 0; line-height: 1.8;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-}
-.aum-card.aum-ok { border-color: #bbf7d0; }
-.aum-card.aum-fail { border-color: #fecaca; }
-.aum-muted { color: var(--aum-muted); font-size: 13px; }
-.aum-badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
-.aum-badge-ok { background: #dcfce7; color: var(--aum-ok); }
-.aum-badge-warn { background: #fef3c7; color: var(--aum-warn); }
-.aum-badge-fail { background: #fee2e2; color: var(--aum-danger); }
-
-/* ---------------------------------------------------------------- 页面与表单 */
-.aum-page { max-width: 720px; }
-.aum-page-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
-.aum-page-head h1 { margin-bottom: 4px; }
-.aum-card-block {
-  background: #fff; border: 1px solid var(--aum-border); border-radius: 12px;
-  padding: 18px 20px; margin: 12px 0; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-}
-.aum-card-block h2 { margin: 0 0 10px; font-size: 17px; }
-.aum-row { display: flex; justify-content: space-between; gap: 16px; padding: 8px 0; border-bottom: 1px dashed #f0f0f1; }
-.aum-row:last-child { border-bottom: 0; }
-.aum-label { color: var(--aum-muted); }
-.aum-actions { display: flex; align-items: center; gap: 14px; margin-top: 6px; }
-.aum-actions a:not(.button) { color: var(--aum-accent); font-size: 14px; }
-
-.aum-field { margin: 10px 0; }
-.aum-field label { display: block; font-size: 13px; color: var(--aum-muted); margin-bottom: 4px; }
-.aum-field input[type='text'], .aum-field input[type='email'], .aum-field input[type='number'], .aum-field input[type='password'], .aum-field select, .aum-field textarea {
-  width: 100%; padding: 9px 12px; border: 1px solid var(--aum-border);
-  border-radius: 8px; font: inherit; box-sizing: border-box; background: #fff;
-}
-.aum-field textarea { font-family: ui-monospace, Menlo, monospace; font-size: 13px; line-height: 1.6; }
-
-.aum-danger-zone { border: 1px dashed #fecaca; border-radius: 10px; padding: 14px; background: #fffbfb; }
-.aum-danger-zone textarea {
-  width: 100%; padding: 9px 12px; border: 1px solid #fecaca; border-radius: 8px;
-  font: inherit; margin: 6px 0 10px; box-sizing: border-box;
-}
-.button-danger { background: var(--aum-danger) !important; border-color: var(--aum-danger) !important; }
-
-.aum-rules { width: auto; }
-.aum-rules input[type='number'] { width: 110px; padding: 6px 8px; border: 1px solid var(--aum-border); border-radius: 6px; }
-
-/* 注册表单提示 */
-.aum-field-hint { color: var(--aum-danger); font-size: 13px; margin: 6px 0 0; }
-.auth input { width: 100%; box-sizing: border-box; }
-
-/* 后台表格内联表单间距 */
-#admin a.form-inline, form { margin: 0; }
+ * 采用 CSS 变量与 site-header 一致的风格；同时注入前台与后台。 */ :root{--aum-accent:#2563eb;--aum-danger:#dc2626;--aum-warn:#d97706;--aum-ok:#16a34a;--aum-border:#e4e4e7;--aum-text:#18181b;--aum-muted:#71717a}
+/* ---------------------------------------------------------------- 前台用户菜单 */ .aum-user-menu{position:relative;display:inline-flex}
+.aum-menu-trigger{display:inline-flex;align-items:center;gap:8px;background:transparent;border:0;cursor:pointer;padding:4px 6px;color:inherit;font:inherit;border-radius:8px}
+.aum-menu-trigger:hover{background:rgba(0, 0, 0, 0.06)}
+.aum-avatar{width:26px;height:26px;border-radius:50%;background:var(--aum-accent);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex:none}
+.aum-menu-name{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.aum-dropdown{position:absolute;right:0;top:calc(100% + 6px);min-width:160px;background:#fff;border:1px solid var(--aum-border);padding:6px;z-index:50;display:none;flex-direction:column;gap:2px}
+.aum-dropdown[data-open='true']{display:flex}
+.aum-dropdown a,.aum-dropdown button{display:block;width:100%;text-align:left;padding:9px 12px;border:0;background:transparent;border-radius:7px;color:var(--aum-text);text-decoration:none;font-size:14px;cursor:pointer}
+.aum-dropdown a:hover,.aum-dropdown button:hover{background:#f4f4f5}
+.aum-dropdown-logout{color:var(--aum-danger) !important}
+/* ---------------------------------------------------------------- 通用提示与省卡 */ .aum-notice{padding:10px 14px;border-radius:8px;margin:10px 0;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;font-size:14px}
+.aum-card{background:#fff;border:1px solid var(--aum-border);border-radius:12px;padding:18px 20px;margin:12px 0;line-height:1.8;box-shadow:0 1px 3px rgba(0, 0, 0, 0.04)}
+.aum-card.aum-ok{border-color:#bbf7d0}
+.aum-card.aum-fail{border-color:#fecaca}
+.aum-muted{color:var(--aum-muted);font-size:13px}
+.aum-badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:600}
+.aum-badge-ok{background:#dcfce7;color:var(--aum-ok)}
+.aum-badge-warn{background:#fef3c7;color:var(--aum-warn)}
+.aum-badge-fail{background:#fee2e2;color:var(--aum-danger)}
+/* ---------------------------------------------------------------- 页面与表单 */ .aum-page{max-width:720px}
+.aum-page-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:8px}
+.aum-page-head h1{margin-bottom:4px}
+.aum-card-block{background:#fff;border:1px solid var(--aum-border);border-radius:12px;padding:18px 20px;margin:12px 0;box-shadow:0 1px 3px rgba(0, 0, 0, 0.04)}
+.aum-card-block h2{margin:0 0 10px;font-size:17px}
+.aum-row{display:flex;justify-content:space-between;gap:16px;padding:8px 0;border-bottom:1px dashed #f0f0f1}
+.aum-row:last-child{border-bottom:0}
+.aum-label{color:var(--aum-muted)}
+.aum-actions{display:flex;align-items:center;gap:14px;margin-top:6px}
+.aum-actions a:not(.button){color:var(--aum-accent);font-size:14px}
+.aum-field{margin:10px 0}
+.aum-field label{display:block;font-size:13px;color:var(--aum-muted);margin-bottom:4px}
+.aum-field input[type='text'],.aum-field input[type='email'],.aum-field input[type='number'],.aum-field input[type='password'],.aum-field select,.aum-field textarea{width:100%;padding:9px 12px;border:1px solid var(--aum-border);border-radius:8px;font:inherit;box-sizing:border-box;background:#fff}
+.aum-field textarea{font-family:ui-monospace, Menlo, monospace;font-size:13px;line-height:1.6}
+.aum-danger-zone{border:1px dashed #fecaca;border-radius:10px;padding:14px;background:#fffbfb}
+.aum-danger-zone textarea{width:100%;padding:9px 12px;border:1px solid #fecaca;border-radius:8px;font:inherit;margin:6px 0 10px;box-sizing:border-box}
+.button-danger{background:var(--aum-danger) !important;border-color:var(--aum-danger) !important}
+.aum-rules{width:auto}
+.aum-rules input[type='number']{width:110px;padding:6px 8px;border:1px solid var(--aum-border);border-radius:6px}
+/* 注册表单提示 */ .aum-field-hint{color:var(--aum-danger);font-size:13px;margin:6px 0 0}
+.auth input{width:100%;box-sizing:border-box}
+/* 后台表格内联表单间距 */ #admin a.form-inline,form{margin:0}
