@@ -1,12 +1,30 @@
 {
-  "name": "advanced-user-management",
+  "name": "@evarentha/linearpress-advanced-user-management",
   "version": "1.0.0",
-  "private": true,
-  "description": "LinearPress 高级用户管理插件：注册增强 / 登录限流 / 邮件激活 / 账号注销",
+  "private": false,
+  "description": "注册增强、登录限流与阶梯封禁、SMTP 邮件激活、账号注销审批与冷却删除",
   "type": "module",
   "main": "index.ts",
+  "files": [
+    "index.ts",
+    "plugin.json",
+    "src",
+    "views",
+    "public",
+    "README.md",
+    "LICENSE"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "linearpress",
+    "plugin",
+    "advanced-user-management"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "peerDependencies": {
-    "nodemailer": "^6.9.0"
+    "nodemailer": ">=6.0.0"
   },
   "peerDependenciesMeta": {
     "nodemailer": {
