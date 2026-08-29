@@ -5,65 +5,68 @@
   Made by MoyuZJ in China with ♥
 -->
 
-# 高级用户管理（advanced-user-management）
+# 高级用户管理 · Advanced User Management
 
-注册增强、**登录限流与阶梯封禁**、**SMTP 邮件激活**、账号注销审批与冷却删除——
-Cordis 原生插件，**仅通过公开 Cordis Context 服务工作**，不依赖 Base 内部实现，可独立部署。
+Signup enhancement, **login throttling with tiered bans**, **SMTP email verification**, and account-deletion approval with cooldown purge. A Cordis-native plugin that works **only through public Cordis Context services** — no internal base dependencies, deployable standalone.
 
-> 本仓库是 LinearPress 插件 **advanced-user-management** 的独立开发仓库。插件即 Cordis 插件函数，即插即用、可停用可卸载。
-> 个人资料扩展由独立的「多彩个人资料」插件提供，本插件不包含。
+注册增强、**登录限流与阶梯封禁**、**SMTP 邮件激活**、账号注销审批与冷却删除——Cordis 原生插件，**仅通过公开 Cordis Context 服务工作**，不依赖 Base 内部实现，可独立部署。个人资料扩展由独立的「多彩个人资料」插件提供。
 
-## 插件化的优势
+> Independent plugin repository for LinearPress **advanced-user-management**. A plugin is a Cordis plugin function — install on demand, disable/uninstall cleanly.
+> 本仓库是 LinearPress 插件 **advanced-user-management** 的独立仓库。
 
-- **零侵入**：不依赖 Base 内部实现，只使用公开服务（`auth/users/posts/comments/permissions/plugins/config/linearpress`）。
-- **服务级协作**：注册/登录接管走 Hook 与路由覆盖；邮件激活的 SMTP 配置同时被 colorful-profiles 复用，一处配置两插件受益。
-- **可选依赖**：`nodemailer` 为可选依赖，不装只影响邮件激活。
+## Why Plugins? / 插件化的优势
 
-## 功能
+- **Zero intrusion** —— only public services（`auth/users/posts/comments/permissions/plugins/config/linearpress`）.
+  **零侵入**——只使用公开服务。
+- **Service-level cooperation** —— SMTP config is reused by colorful-profiles; one config, two plugins.
+  **服务级协作**——SMTP 配置同时被多彩资料复用。
+- **Optional dependency** —— `nodemailer` optional；missing it only disables email verification.
+  **可选依赖**——不装只影响邮件激活。
 
-1. **注册增强**——注册表单「确认密码」字段，前端实时校验 + 后端强校验（可配置开关）。
-2. **登录限流与阶梯封禁**——按「用户名 + IP」双主体跟踪：10 分钟窗口 ≥10 次→封 15 分钟；30 分钟 ≥15 次→封 60 分钟；1 小时 ≥25 次→封 90 分钟；单日触发 ≥3 次→阶梯封禁（3 天/7 天/永久，可关永久并设兜底天数）。全部阈值后台可调，管理端有**解封队列**。
-3. **SMTP 邮件激活**——新用户默认「未验证」，邮件链接激活后获得完整权限；邮箱域名白名单（qq.com/outlook.com/…可编辑）；自定义邮件模板（HTML 占位符 `{{siteName}} {{username}} {{verifyUrl}} {{siteUrl}}`）；注册成功提示进入邮箱验证。
-4. **账号注销**——用户端提交注销申请（可填原因）；管理端批准后进入冷却期（默认 30 天，可配），期满定时任务物理注销（文章默认同删，可转交超管）；冷却期内可撤销；超级管理员不可注销。
+## Features / 功能
 
-管理端入口：侧栏「账户安全」；插件列表「高级用户管理设置」。
+1. **Signup enhancement / 注册增强**——「confirm password」field；front-end live check + server-side enforcement（toggleable）.
+2. **Login throttling & tiered bans / 登录限流与阶梯封禁**——tracked by「username + IP」：10-min window ≥10 fails → 15-min ban；30-min ≥15 → 60-min；1-hour ≥25 → 90-min；≥3 ban events/day → tiered（3d/7d/permanent；permanent can be disabled with a fallback of days）。All thresholds adjustable；admin has an unban queue.
+3. **SMTP email verification / SMTP 邮件激活**——new users start「unverified」，link activates full permissions；email domain whitelist（qq.com/outlook.com/…editable）；custom HTML template with `{{siteName}} {{username}} {{verifyUrl}} {{siteUrl}}` placeholders.
+4. **Account deletion / 账号注销**——users submit a deletion request（optional reason）；admins approve → cooldown（default 30 days）→ auto physical purge（posts deleted or reassigned to super admin，configurable）；users can cancel during cooldown；super admins can't be deleted.
 
-## 部署
+Admin entries：sidebar「账户安全」；plugin list「高级用户管理设置」.
+
+## Install / 安装
 
 ```bash
-# 复制到站点 src/plugins/<id>/（目录名必须与插件 id 一致）
-cp -r Plugins/advanced-user-management <站点>/src/plugins/advanced-user-management
+cp -r Plugins/advanced-user-management <site>/src/plugins/advanced-user-management
 
-# SMTP 邮件激活需要 nodemailer（二选一）：
-cd <站点> && npm install nodemailer
-# 或 cd <站点>/src/plugins/advanced-user-management && npm install nodemailer
+# SMTP requires nodemailer（either）：
+cd <site> && npm install nodemailer
+# or / 或
+cd <site>/src/plugins/advanced-user-management && npm install nodemailer
 ```
 
-## 本地开发：怎么拉 / 怎么改 / 怎么跑
+## Local Development / 本地开发：怎么拉 / 怎么改 / 怎么跑
 
 ```bash
-git clone <本仓库地址> LinearPress/Plugins/advanced-user-management
+git clone https://github.com/Averithen/linearpress-advanced-user-management LinearPress/Plugins/advanced-user-management
 cd LinearPress/base
 npm install && npm run db:init
 sh scripts/sync-plugins.sh advanced-user-management
 npm run dev
 ```
 
-## 目录结构
+## Directory / 目录结构
 
 ```text
 advanced-user-management/
-├── plugin.json                  # Manifest（permissions: aum:manage）
-├── index.ts                     # 入口：注册/登录接管、限流封禁、邮件、注销流程
-├── src/
-│   ├── config.ts / email.ts / rate-limit.ts / store.ts / deletion.ts
-├── views/                       # login/register 覆盖、个人设置、验证页、后台管理页
-├── public/                      # 前端脚本与样式
-└── types/                       # cordis/session 声明
+├── plugin.json                  Manifest（permissions: aum:manage）
+├── index.ts                     entry：signup/login takeover, throttling, email, deletion flow
+├── src/                         config / email / rate-limit / store / deletion modules
+├── views/                       login/register overrides、profile settings、verify、admin pages
+├── public/                      front-end script & styles
+└── types/                       cordis/session declarations
 ```
 
-## 贡献与发布
+## Contribute & Release / 贡献与发布
 
-- conventional commits；提交前 `cd base && npm run typecheck`
-- 版本：`git tag v1.0.0 && git push --tags`
-- License：MIT（见仓库 LICENSE）
+- conventional commits；`cd base && npm run typecheck` before commit
+- Version：`git tag v1.0.0 && git push --tags`
+- License：MIT（LICENSE）
