@@ -46,7 +46,7 @@ cd <site>/src/plugins/advanced-user-management && npm install nodemailer
 ## Local Development / 本地开发：怎么拉 / 怎么改 / 怎么跑
 
 ```bash
-git clone https://github.com/Averithen/linearpress-advanced-user-management LinearPress/Plugins/advanced-user-management
+git clone https://github.com/Evarentha/linearpress-advanced-user-management LinearPress/Plugins/advanced-user-management
 cd LinearPress/base
 npm install && npm run db:init
 sh scripts/sync-plugins.sh advanced-user-management
