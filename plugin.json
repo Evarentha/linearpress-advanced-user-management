@@ -1,15 +1,21 @@
 {
   "id": "advanced-user-management",
   "name": "高级用户管理",
-  "version": "1.0.0",
+  "version": "3.0.0",
   "description": "注册增强、登录限流与阶梯封禁、SMTP 邮件激活、账号注销审批与冷却删除",
   "author": "LinearPress",
   "type": "both",
   "main": "index.ts",
   "runtime": "cordis",
-  "permissions": ["aum:manage"],
+  "permissions": [
+    "aum:manage"
+  ],
   "views": "views",
   "public": "public",
-  "styles": ["advanced-user-management.css?v=1.0.0"],
-  "scripts": ["advanced-user-management.js?v=1.0.0"]
+  "styles": [
+    "advanced-user-management.css?v=1.0.0"
+  ],
+  "scripts": [
+    "advanced-user-management.js?v=1.0.0"
+  ]
 }
