@@ -1,69 +1,41 @@
-<!--
-  Author: MoyuZJ
-  Team: LinearTeam
-  Contact: linearteam@foxmail.com
-  Made by MoyuZJ in China with ♥
--->
+# Advanced User Management
 
-# 高级用户管理（advanced-user-management）
+[![LinearPress](https://img.shields.io/badge/LinearPress-plugin-7C3AED.svg)](https://www.npmjs.com/package/@evarentha/linearpress) [![npm](https://img.shields.io/npm/v/@evarentha/linearpress-advanced-user-management.svg)](https://www.npmjs.com/package/@evarentha/linearpress-advanced-user-management) [![Node.js](https://img.shields.io/badge/node-%3E%3D22-green.svg)](https://nodejs.org) [![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue.svg)](https://www.typescriptlang.org) [![License: GPL-3.0-or-later](https://img.shields.io/badge/License-GPL--3.0--or--later-blue.svg)](LICENSE)
 
-注册增强、**登录限流与阶梯封禁**、**SMTP 邮件激活**、账号注销审批与冷却删除——
-Cordis 原生插件，**仅通过公开 Cordis Context 服务工作**，不依赖 Base 内部实现，可独立部署。
+**English** | [简体中文](README.zh-CN.md)
 
-> 本仓库是 LinearPress 插件 **advanced-user-management** 的独立开发仓库。插件即 Cordis 插件函数，即插即用、可停用可卸载。
-> 个人资料扩展由独立的「多彩个人资料」插件提供，本插件不包含。
+`advanced-user-management` is a plugin for LinearPress that hardens the account lifecycle on four fronts: registration, login, email activation, and deletion. With email activation switched on, unverified users cannot comment. The plugin imports no base internals and works only through public Cordis services, so it installs and removes cleanly.
 
-## 插件化的优势
-
-- **零侵入**：不依赖 Base 内部实现，只使用公开服务（`auth/users/posts/comments/permissions/plugins/config/linearpress`）。
-- **服务级协作**：注册/登录接管走 Hook 与路由覆盖；邮件激活的 SMTP 配置同时被 colorful-profiles 复用，一处配置两插件受益。
-- **可选依赖**：`nodemailer` 为可选依赖，不装只影响邮件激活。
-
-## 功能
-
-1. **注册增强**——注册表单「确认密码」字段，前端实时校验 + 后端强校验（可配置开关）。
-2. **登录限流与阶梯封禁**——按「用户名 + IP」双主体跟踪：10 分钟窗口 ≥10 次→封 15 分钟；30 分钟 ≥15 次→封 60 分钟；1 小时 ≥25 次→封 90 分钟；单日触发 ≥3 次→阶梯封禁（3 天/7 天/永久，可关永久并设兜底天数）。全部阈值后台可调，管理端有**解封队列**。
-3. **SMTP 邮件激活**——新用户默认「未验证」，邮件链接激活后获得完整权限；邮箱域名白名单（qq.com/outlook.com/…可编辑）；自定义邮件模板（HTML 占位符 `{{siteName}} {{username}} {{verifyUrl}} {{siteUrl}}`）；注册成功提示进入邮箱验证。
-4. **账号注销**——用户端提交注销申请（可填原因）；管理端批准后进入冷却期（默认 30 天，可配），期满定时任务物理注销（文章默认同删，可转交超管）；冷却期内可撤销；超级管理员不可注销。
-
-管理端入口：侧栏「账户安全」；插件列表「高级用户管理设置」。
-
-## 部署
+## Install
 
 ```bash
-# 复制到站点 src/plugins/<id>/（目录名必须与插件 id 一致）
-cp -r Plugins/advanced-user-management <站点>/src/plugins/advanced-user-management
-
-# SMTP 邮件激活需要 nodemailer（二选一）：
-cd <站点> && npm install nodemailer
-# 或 cd <站点>/src/plugins/advanced-user-management && npm install nodemailer
+git clone https://github.com/Evarentha/linearpress-advanced-user-management.git src/plugins/advanced-user-management
 ```
 
-## 本地开发：怎么拉 / 怎么改 / 怎么跑
+The directory name must equal the plugin id. Restart afterwards, or sync from the `base` checkout (`sh scripts/sync-plugins.sh advanced-user-management`), or upload the ZIP / npm name from the admin Plugins page. For SMTP email activation, run `npm install nodemailer` in the site (or inside the plugin directory) afterwards; it is that feature's only external dependency.
 
-```bash
-git clone <本仓库地址> LinearPress/Plugins/advanced-user-management
-cd LinearPress/base
-npm install && npm run db:init
-sh scripts/sync-plugins.sh advanced-user-management
-npm run dev
-```
+## Login limiting and bans
 
-## 目录结构
+Failed logins are tracked in two independent scopes, username and source IP. Up to three tiers are configurable, each with its own window, threshold, and ban length. The defaults: 10 failures within 10 minutes brings a 15-minute ban, 15 within 30 minutes brings 60 minutes, 25 within an hour brings 90 minutes. When the same subject trips a tier three times in one day, bans escalate along a ladder: 3 days, then 7 days, then permanent. Permanent bans can be switched off, in which case a configurable fallback (30 days by default) applies instead. The admin console ships an unban queue for review.
 
-```text
-advanced-user-management/
-├── plugin.json                  # Manifest（permissions: aum:manage）
-├── index.ts                     # 入口：注册/登录接管、限流封禁、邮件、注销流程
-├── src/
-│   ├── config.ts / email.ts / rate-limit.ts / store.ts / deletion.ts
-├── views/                       # login/register 覆盖、个人设置、验证页、后台管理页
-├── public/                      # 前端脚本与样式
-└── types/                       # cordis/session 声明
-```
+Registration gets a password confirmation field, checked live in the browser and enforced again on the server, switchable in settings.
 
-## 贡献与发布
+## Email activation
 
-- conventional commits；提交前 `cd base && npm run typecheck`
-- 版本：`git tag v1.0.0 && git push --tags`
-- License：MIT（见仓库 LICENSE）
+Off by default. When enabled, new users start unverified and receive an activation link by mail with a configurable TTL (48 hours by default). A sender domain whitelist is built in. Use the built-in HTML mail template or upload your own with `{{siteName}}`, `{{username}}`, `{{verifyUrl}}`, and `{{siteUrl}}` placeholders, and check the setup with the test-mail button in settings. Unverified users are blocked from commenting through the `comment:beforeCreate` hook.
+
+## Account deletion
+
+The user submits a deletion request with an optional reason, an admin approves it, a cooldown runs (30 days by default, configurable, and the user can cancel during it), then a scheduled job physically deletes the account. Posts go with it or are reassigned to the super admin, depending on the setting. The super admin cannot be deleted.
+
+## Admin and settings
+
+The console lives at `/admin/advanced-user-management` (sidebar entry "账户安全"), settings at `/admin/advanced-user-management/settings`, plus a reset-to-defaults action. Every knob from the sections above is there. The configuration is stored as JSON in the plugin registry under `advanced-user-management`, and `aum:manage` guards the console, settings, and every moderation action: unban, deletion review, manual verify, resend activation mail, and the SMTP test.
+
+## Notes
+
+The plugin takes over `POST /login`, `POST /register`, and `GET /register`, and adds `GET /verify` for the activation link. User pages are `/profile` and `/profile/settings`; deletion requests are submitted and cancelled from the settings page. easy-2fa coexists: the login override passes control on with `next()`, so 2FA challenges still run, and oidc-sso runs alongside. colorful-profiles reuses the `aum_users` table and the SMTP settings, so one configuration serves both. Tables (business database): `aum_users`, `aum_login_failures`, `aum_bans`, `aum_delete_requests`.
+
+## License
+
+GPL-3.0-or-later, Copyright (C) 2026 Evarentha. See LICENSE.
