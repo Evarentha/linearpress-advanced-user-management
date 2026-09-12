@@ -1,14 +1,23 @@
 /*
- * Author: MoyuZJ
- * Team: LinearTeam
- * Contact: linearteam@foxmail.com
- * Made by MoyuZJ in China with ♥
+ * Advanced User Management Data Store
+ *
+ * Standard-SQL data access layer shared by SQLite and MySQL deployments.
+ *
+ * Authors:
+ * MoyuZJ <moyuzj@moyuzj.cn> @LinearTeam - Made in China with ♥
+ *
+ * Copyright (C) 2026 Evarentha
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
 /**
- * 数据访问层：只使用标准 SQL（SQLite / MySQL 双兼容），
- * 通过 databaseService 调用，跟随主业务库（MySQL 驱动生效时亦正确）。
- * 本模块不依赖 Base 内部实现。
+ * <p>Data access layer: uses only standard SQL (compatible with both SQLite
+ * and MySQL), invoked through databaseService so it follows the main
+ * business database (still correct when the MySQL driver is active).</p>
+ *
+ * <p>This module does not depend on Base internal implementations.</p>
+ *
+ * @since 1.0.0
  */
 
 export interface Db {

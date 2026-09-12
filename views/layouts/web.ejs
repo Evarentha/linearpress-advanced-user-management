@@ -1,11 +1,24 @@
 <!--
-  Author: MoyuZJ
-  Team: LinearTeam
-  Contact: linearteam@foxmail.com
-  Made by MoyuZJ in China with ♥
-  说明：本布局为插件覆盖版本（视图优先级高于 Base），在 Base 布局基础上
-  为登录用户增加「头像 + 用户名」下拉菜单（个人资料 / 设置 / 后台 / 退出）。
-  若 Base 前台布局大幅变动，请以本文件为准同步差异。
+  Web Layout Override with User Menu
+
+  Plugin-provided override of the Base front layout, adding a user dropdown
+  menu for logged-in users.
+
+  Authors:
+  MoyuZJ <moyuzj@moyuzj.cn> @LinearTeam - Made in China with ♥
+
+  Copyright (C) 2026 Evarentha
+  SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title><%= title %> · <%= siteConfig.siteName || siteConfig.title || 'LinearPress' %></title><meta name="description" content="<%= siteConfig.siteDescription || siteConfig.description %>"><% if (siteConfig.customCss) { %><style><%- siteConfig.customCss %></style><% } %><link rel="stylesheet" href="/css/style.css"><% for (const css of pluginStyleUrls) { %><link rel="stylesheet" href="<%= css %>"><% } %><script src="https://cdn.tailwindcss.com"></script></head><body><header class="site-header"><a class="brand" href="/"><%= siteConfig.siteName || 'LINEARPRESS' %></a><nav><a href="/">首页</a><% if (currentUser) { %><div class="aum-user-menu"><button type="button" class="aum-menu-trigger" aria-haspopup="true" aria-expanded="false"><span class="aum-avatar"><%= (currentUser.username || '?').charAt(0).toUpperCase() %></span><span class="aum-menu-name"><%= currentUser.username %></span></button><div class="aum-dropdown" role="menu"><a role="menuitem" href="/profile">个人资料</a><a role="menuitem" href="/profile/settings">设置</a><a role="menuitem" href="/admin">后台</a><form action="/logout" method="post" role="menuitem"><button type="submit" class="aum-dropdown-logout">退出登录</button></form></div></div><% } else { %><a href="/login">登录</a><% } %></nav></header><main class="shell"><%- body %></main><footer class="site-footer"><% if (siteConfig.footerCopyright !== 'none') { %><p class="footer-copy"><%= siteConfig.footerCopyright === 'running-on' ? ('本站正在运行基于 CordisJS 的 LinearPress 版本 ' + LINEARPRESS_VERSION + '。') : ('由 LinearPress 强力驱动，基于 CordisJS。正在运行的版本为：' + LINEARPRESS_VERSION + '。') %></p><% } %><% if (siteConfig.icpNumber) { %><p class="footer-icp"><%= siteConfig.icpProvince ? siteConfig.icpProvince : '' %>ICP备<%= siteConfig.icpNumber %>号<% if (siteConfig.policeNumber) { %> | 国公网安备第<%= siteConfig.policeNumber %>号<% } %></p><% } %><% if (siteConfig.footerHtml) { %><div class="footer-html"><%- siteConfig.footerHtml %></div><% } %><p class="footer-meta">TYPE-SAFE PUBLISHING / <%= new Date().getFullYear() %></p></footer><% for (const script of pluginScriptUrls) { %><script src="<%= script %>"></script><% } %></body></html>
+<!--
+  This layout is the plugin override version (plugin views take priority
+  over Base): on top of the Base layout it adds an avatar + username
+  dropdown menu for logged-in users (profile / settings / admin / logout).
+  If the Base front layout changes significantly, treat this file as the
+  reference and sync the differences.
+
+  @since 1.0.0
+-->
+
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title><%= title %> · <%= siteConfig.siteName || siteConfig.title || 'LinearPress' %></title><meta name="description" content="<%= siteConfig.siteDescription || siteConfig.description %>"><% if (siteConfig.customCss) { %><style><%- siteConfig.customCss %></style><% } %><link rel="stylesheet" href="/css/style.css"><% for (const css of pluginStyleUrls) { %><link rel="stylesheet" href="<%= css %>"><% } %></head><body><header class="site-header"><a class="brand" href="/"><%= siteConfig.siteName || 'LINEARPRESS' %></a><nav><a href="/">首页</a><% if (currentUser) { %><div class="aum-user-menu"><button type="button" class="aum-menu-trigger" aria-haspopup="true" aria-expanded="false"><span class="aum-avatar"><%= (currentUser.username || '?').charAt(0).toUpperCase() %></span><span class="aum-menu-name"><%= currentUser.username %></span></button><div class="aum-dropdown" role="menu"><a role="menuitem" href="/profile">个人资料</a><a role="menuitem" href="/profile/settings">设置</a><a role="menuitem" href="/admin">后台</a><form action="/logout" method="post" role="menuitem"><button type="submit" class="aum-dropdown-logout">退出登录</button></form></div></div><% } else { %><a href="/login">登录</a><% } %></nav></header><main class="shell"><%- body %></main><footer class="site-footer"><% if (siteConfig.footerCopyright !== 'none') { %><p class="footer-copy"><%= siteConfig.footerCopyright === 'running-on' ? ('本站正在运行基于 CordisJS 的 LinearPress 版本 ' + LINEARPRESS_VERSION + '。') : ('由 LinearPress 强力驱动，基于 CordisJS。正在运行的版本为：' + LINEARPRESS_VERSION + '。') %></p><% } %><% if (siteConfig.icpNumber) { %><p class="footer-icp"><%= siteConfig.icpProvince ? siteConfig.icpProvince : '' %>ICP备<%= siteConfig.icpNumber %>号<% if (siteConfig.policeNumber) { %> | 国公网安备第<%= siteConfig.policeNumber %>号<% } %></p><% } %><% if (siteConfig.footerHtml) { %><div class="footer-html"><%- siteConfig.footerHtml %></div><% } %><p class="footer-meta">TYPE-SAFE PUBLISHING / <%= new Date().getFullYear() %></p></footer><% for (const script of pluginScriptUrls) { %><script src="<%= script %>"></script><% } %></body></html>

@@ -1,8 +1,20 @@
 <!--
-  Author: MoyuZJ
-  Team: LinearTeam
-  Contact: linearteam@foxmail.com
-  登录表单：支持 error（限流/凭证错误）与 notice（如邮箱未验证提示）。
+  Login Form
+
+  Login form with error and notice display.
+
+  Authors:
+  MoyuZJ <moyuzj@moyuzj.cn> @LinearTeam - Made in China with ♥
+
+  Copyright (C) 2026 Evarentha
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
+<!--
+  Login form: supports error (rate limiting / wrong credentials) and notice
+  (such as the email-not-verified prompt).
+
+  @since 1.0.0
 -->
 
 <section class="auth"><p class="eyebrow">ACCOUNT ACCESS</p><h1>登录</h1><% if (typeof notice !== 'undefined' && notice) { %><p class="aum-notice"><%= notice %></p><% } %><% if (error) { %><p class="error"><%= error %></p><% } %><form method="post" action="/login"><input name="username" required placeholder="用户名"><input name="password" required type="password" placeholder="密码"><button class="button" type="submit">进入后台</button></form><a href="/register">创建账号 →</a></section>

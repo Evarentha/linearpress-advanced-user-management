@@ -1,8 +1,21 @@
-/* * Author: MoyuZJ
- * Team: LinearTeam
- * Contact: linearteam@foxmail.com
- * 高级用户管理 - 样式
- * 采用 CSS 变量与 site-header 一致的风格；同时注入前台与后台。 */ :root{--aum-accent:#2563eb;--aum-danger:#dc2626;--aum-warn:#d97706;--aum-ok:#16a34a;--aum-border:#e4e4e7;--aum-text:#18181b;--aum-muted:#71717a}
+/*
+ * Advanced User Management Stylesheet
+ *
+ * Styles for AUM front-end pages and admin panels.
+ *
+ * Authors:
+ * MoyuZJ <moyuzj@moyuzj.cn> @LinearTeam - Made in China with ♥
+ *
+ * Copyright (C) 2026 Evarentha
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
+/*
+ * Advanced User Management styles. Uses CSS variables consistent with the
+ * site-header look; injected into both the front end and the admin panel.
+ *
+ * @since 1.0.0
+ */ :root{--aum-accent:#2563eb;--aum-danger:#dc2626;--aum-warn:#d97706;--aum-ok:#16a34a;--aum-border:#e4e4e7;--aum-text:#18181b;--aum-muted:#71717a}
 /* ---------------------------------------------------------------- 前台用户菜单 */ .aum-user-menu{position:relative;display:inline-flex}
 .aum-menu-trigger{display:inline-flex;align-items:center;gap:8px;background:transparent;border:0;cursor:pointer;padding:4px 6px;color:inherit;font:inherit;border-radius:8px}
 .aum-menu-trigger:hover{background:rgba(0, 0, 0, 0.06)}
@@ -43,4 +56,4 @@
 .aum-rules input[type='number']{width:110px;padding:6px 8px;border:1px solid var(--aum-border);border-radius:6px}
 /* 注册表单提示 */ .aum-field-hint{color:var(--aum-danger);font-size:13px;margin:6px 0 0}
 .auth input{width:100%;box-sizing:border-box}
-/* 后台表格内联表单间距 */ #admin a.form-inline,form{margin:0}
+/* 后台表格内联表单间距（仅作用于后台，避免全局 form 重置影响前台） */ #admin a.form-inline,#admin form{margin:0}

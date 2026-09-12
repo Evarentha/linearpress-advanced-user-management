@@ -1,22 +1,37 @@
 /*
- * Author: MoyuZJ
- * Team: LinearTeam
- * Contact: linearteam@foxmail.com
- * Made by MoyuZJ in China with ♥
+ * Advanced User Management Plugin Entry
+ *
+ * Entry point of the Advanced User Management plugin, a native Cordis plugin
+ * whose default export is the activate stage.
+ *
+ * Authors:
+ * MoyuZJ <moyuzj@moyuzj.cn> @LinearTeam - Made in China with ♥
+ *
+ * Copyright (C) 2026 Evarentha
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
 /**
- * 高级用户管理插件入口（Cordis 原生插件，export default 即 activate 阶段）。
+ * <p>Features:</p>
+ * <ul>
+ * <li>Registration hardening: password double confirmation (live front-end
+ * checks plus strict back-end validation).</li>
+ * <li>Login rate limiting: 10/30/60-minute window thresholds trigger
+ * 15/60/90-minute bans; three or more bans within a single day trigger the
+ * escalation ladder (3 days / 7 days / permanent); the admin panel provides
+ * a release queue.</li>
+ * <li>SMTP email activation: domain whitelist, activation links, and a
+ * registration success notice; unverified users have restricted permissions
+ * (comment interception).</li>
+ * <li>Account deletion: user request, admin-group approval, cooldown period
+ * (30 days by default), then automatic physical deletion by the system.</li>
+ * </ul>
  *
- * 功能：
- *  1. 注册增强：密码二次确认（前端实时校验 + 后端强校验）。
- *  2. 登录限流：10/30/60 分钟窗口阈值 → 15/60/90 分钟封禁；单日 ≥3 次触发阶梯封禁（3 天/7 天/永久）；
- *     管理端提供解封队列。
- *  3. SMTP 邮件激活：域名白名单、激活链接、注册成功提示；未验证用户权限受限（评论拦截）。
- *  5. 账号注销：用户申请 → 管理组审批 → 冷却期（默认 30 天）→ 系统自动物理注销。
+ * <p>Depends on no Base internal modules: it works only through the public
+ * Cordis Context services (auth/users/posts/comments/permissions/config/
+ * plugins/linearpress) and can be deployed independently.</p>
  *
- * 不依赖 Base 内部模块：仅通过 Cordis Context 公开服务（auth/users/posts/comments/
- * permissions/config/plugins/linearpress）工作，可独立部署。
+ * @since 1.0.0
  */
 
 import { randomUUID } from 'node:crypto';
@@ -167,8 +182,12 @@ export default async function advancedUserManagement(context: Context) {
   });
 
   // ------------------------------------------------------------ 注册增强
+  const registerViewHandler: RequestHandler = wrap(async (_req, res) => {
+    res.render('auth/register', { title: '注册', error: null, emailRequired: config.emailVerify.enable });
+  });
+
   const registerHandler: RequestHandler = wrap(async (req, res) => {
-    const renderError = (error: string) => res.status(400).render('auth/register', { title: '注册', error });
+    const renderError = (error: string) => res.status(400).render('auth/register', { title: '注册', error, emailRequired: config.emailVerify.enable });
     const username = text(req.body.username);
     const email = text(req.body.email);
     const password = text(req.body.password);
@@ -384,6 +403,7 @@ export default async function advancedUserManagement(context: Context) {
   // ------------------------------------------------------------ 路由注册
   // 覆盖认证路由（插件路由在 applyToApp 逆序挂载后优先于核心路由）
   web.register('post', '/login', loginHandler);
+  web.register('get', '/register', registerViewHandler);
   web.register('post', '/register', registerHandler);
   web.register('get', '/verify', verifyHandler);
 

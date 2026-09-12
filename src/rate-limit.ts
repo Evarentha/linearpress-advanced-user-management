@@ -1,21 +1,32 @@
 /*
- * Author: MoyuZJ
- * Team: LinearTeam
- * Contact: linearteam@foxmail.com
- * Made by MoyuZJ in China with ♥
+ * Login Rate Limiter and Ban Ladder
+ *
+ * Sliding-window login failure tracking with escalating ban steps.
+ *
+ * Authors:
+ * MoyuZJ <moyuzj@moyuzj.cn> @LinearTeam - Made in China with ♥
+ *
+ * Copyright (C) 2026 Evarentha
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
 /**
- * 登录限流与阶梯封禁。
+ * <p>Login rate limiting with the escalation ban ladder.</p>
  *
- * 规则（均可在插件配置中调整）：
- *  - 10 分钟窗口内失败 ≥10 次 → 封禁 15 分钟
- *  - 30 分钟窗口内失败 ≥15 次 → 封禁 60 分钟
- *  - 1 小时窗口内失败 ≥25 次 → 封禁 90 分钟
- *  - 单日内同一主体触发封禁 ≥ escalationTriggerPerDay（默认 3）次 →
- *    阶梯封禁 3 天 / 7 天 / 永久（第 3 阶可配置为不允许永久）。
+ * <p>Rules (all adjustable in the plugin configuration):</p>
+ * <ul>
+ * <li>10 or more failures within a 10-minute window, a 15-minute ban.</li>
+ * <li>15 or more failures within a 30-minute window, a 60-minute ban.</li>
+ * <li>25 or more failures within a 1-hour window, a 90-minute ban.</li>
+ * <li>Bans triggered escalationTriggerPerDay times (3 by default) within a
+ * single day by the same subject escalate to the ladder of 3 days / 7 days /
+ * permanent (the third step can be configured to disallow permanence).</li>
+ * </ul>
  *
- * 限流主体（scope）同时跟踪「用户名」与「来源 IP」，任一命中封禁即拒绝登录。
+ * <p>Rate-limit subjects (scopes) track both the username and the source IP;
+ * a login is rejected as soon as either scope is banned.</p>
+ *
+ * @since 1.0.0
  */
 
 import { randomUUID } from 'node:crypto';

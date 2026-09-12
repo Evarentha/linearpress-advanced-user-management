@@ -1,8 +1,20 @@
 <!--
-  Author: MoyuZJ
-  Team: LinearTeam
-  Contact: linearteam@foxmail.com
-  注册成功提示：欢迎语 + 邮箱服务商指引（需求 3.3 文案规范）。
+  Registration Success Page
+
+  Post-registration notice with welcome copy and mail provider guidance.
+
+  Authors:
+  MoyuZJ <moyuzj@moyuzj.cn> @LinearTeam - Made in China with ♥
+
+  Copyright (C) 2026 Evarentha
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
+<!--
+  Registration success notice: welcome message plus email provider guidance
+  (requirement 3.3 copy spec).
+
+  @since 1.0.0
 -->
 
 <section class="auth aum-register-done"><p class="eyebrow">WELCOME</p><h1>注册成功</h1><div class="aum-card"><p>欢迎！<strong><%= email %></strong>，我们已向该邮箱发送了一封激活邮件。</p><p>请登录<% if (providerUrl) { %> <a href="<%= providerUrl %>" target="_blank" rel="noopener">邮箱服务商网站</a><% } else { %>你的邮箱服务商网站<% } %>查看邮件，点击链接完成验证。</p><p class="aum-muted">验证完成后即可获得完整权限。若未收到邮件，请检查垃圾箱。</p></div><div class="aum-actions"><a class="button" href="/login">前往登录</a><a href="/">返回首页</a></div></section>

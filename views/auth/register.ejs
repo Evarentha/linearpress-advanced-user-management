@@ -1,8 +1,20 @@
 <!--
-  Author: MoyuZJ
-  Team: LinearTeam
-  Contact: linearteam@foxmail.com
-  注册表单：密码二次确认（前端实时校验，后端强校验由插件 POST /register 负责）。
+  Registration Form
+
+  Registration form with the password confirmation field.
+
+  Authors:
+  MoyuZJ <moyuzj@moyuzj.cn> @LinearTeam - Made in China with ♥
+
+  Copyright (C) 2026 Evarentha
+  SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
-<section class="auth aum-register"><p class="eyebrow">NEW WRITER</p><h1>注册</h1><% if (error) { %><p class="error"><%= error %></p><% } %><form method="post" action="/register" class="aum-register-form" data-aum-register><input name="username" required minlength="3" placeholder="用户名（至少 3 个字符）"><input name="email" type="email" placeholder="邮箱（用于接收验证邮件）"><input name="password" required type="password" minlength="8" placeholder="密码（至少 8 位）"><input name="password_confirmation" required type="password" minlength="8" placeholder="确认密码"><p class="aum-field-hint" data-aum-confirm-hint hidden>两次输入的密码不一致</p><button class="button" type="submit">创建账号</button></form><a href="/login">已有账号 →</a></section>
+<!--
+  Registration form: password double confirmation (live front-end checks;
+  strict back-end validation is handled by the plugin's POST /register).
+
+  @since 1.0.0
+-->
+
+<section class="auth aum-register"><p class="eyebrow">NEW WRITER</p><h1>注册</h1><% if (error) { %><p class="error"><%= error %></p><% } %><form method="post" action="/register" class="aum-register-form" data-aum-register><input name="username" required minlength="3" placeholder="用户名（至少 3 个字符）"><input name="email" type="email" <%= emailRequired ? 'required' : '' %> placeholder="邮箱（用于接收验证邮件）"><input name="password" required type="password" minlength="8" placeholder="密码（至少 8 位）"><input name="password_confirmation" required type="password" minlength="8" placeholder="确认密码"><p class="aum-field-hint" data-aum-confirm-hint hidden>两次输入的密码不一致</p><button class="button" type="submit">创建账号</button></form><a href="/login">已有账号 →</a></section>

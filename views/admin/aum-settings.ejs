@@ -1,13 +1,25 @@
 <!--
-  Author: MoyuZJ
-  Team: LinearTeam
-  Contact: linearteam@foxmail.com
-  高级用户管理 · 设置表单：限流规则 / 阶梯封禁 / SMTP 邮件验证 / 域名白名单 / 注销冷却。
+  Account Security Settings Form
+
+  Admin settings form for the Advanced User Management plugin.
+
+  Authors:
+  MoyuZJ <moyuzj@moyuzj.cn> @LinearTeam - Made in China with ♥
+
+  Copyright (C) 2026 Evarentha
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
+<!--
+  Advanced User Management settings form: rate-limit rules, escalation bans,
+  SMTP email verification, domain whitelist, and deletion cooldown.
+
+  @since 1.0.0
 -->
 
 <div class="page-head"><h1>高级用户管理 · 设置</h1><a class="button button-mini" href="/admin/advanced-user-management">返回总览</a></div>
 <% const notices = { 'saved': '设置已保存（无需重启，即时生效）。', 'reset': '已恢复默认设置。' }; %>
-<% if (notice && notices[notice]) { %><p class="notice notice-ok"><%= notices[notice] %></p><% } else if (notice && !notices[notice]) { %><p class="notice notice-error"><%= notice %></p><% } %>
+<% if (notice && notices[notice]) { %><p class="notice notice-ok"><%= notices[notice] %></p><% } %>
 
 <form method="post" action="/admin/advanced-user-management/settings">
   <div class="panel-summary">
@@ -73,7 +85,7 @@
   </div>
 
   <div class="panel-summary">
-    <p class="eyebrow">⑤ 账号注销</p>
+    <p class="eyebrow">④ 账号注销</p>
     <div class="aum-field"><label>批准后冷却期（天）</label><input type="number" name="deletion_cooldown_days" value="<%= config.deletion.cooldownDays %>" min="1"></div>
     <label class="switch-row"><input type="checkbox" name="deletion_delete_posts" <%= config.deletion.deletePosts ? 'checked' : '' %>> <span>物理注销时一并删除该用户文章（评论随文章删除）</span></label>
   </div>

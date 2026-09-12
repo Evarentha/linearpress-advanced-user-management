@@ -1,18 +1,30 @@
 /*
- * Author: MoyuZJ
- * Team: LinearTeam
- * Contact: linearteam@foxmail.com
- * Made by MoyuZJ in China with ♥
+ * SMTP Verification Email Module
+ *
+ * Builds and sends the SMTP verification mail used for account activation.
+ *
+ * Authors:
+ * MoyuZJ <moyuzj@moyuzj.cn> @LinearTeam - Made in China with ♥
+ *
+ * Copyright (C) 2026 Evarentha
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
 /**
- * SMTP 邮件激活：验证邮件生成与发送。
+ * <p>SMTP email activation: verification mail generation and delivery.</p>
  *
- * - nodemailer 通过 createRequire 动态加载：插件可在自身目录或站点根目录
- *   `npm install nodemailer` 后即插即用；未安装或未配置时返回明确错误信息，
- *   不携带硬依赖，保证「不依赖基座」的独立模块属性。
- * - 模板采用占位符替换（{{siteName}} / {{username}} / {{verifyUrl}} / {{siteUrl}}），
- *   支持默认模板与上传自定义模板（HTML）。
+ * <ul>
+ * <li>nodemailer is loaded dynamically via createRequire: after running
+ * `npm install nodemailer` in the plugin directory or the site root the
+ * plugin works out of the box; when it is missing or unconfigured a clear
+ * error message is returned, so the module carries no hard dependency and
+ * keeps its standalone, base-independent nature.</li>
+ * <li>Templates use placeholder substitution ({{siteName}} / {{username}} /
+ * {{verifyUrl}} / {{siteUrl}}) and support the default template as well as
+ * uploaded custom HTML templates.</li>
+ * </ul>
+ *
+ * @since 1.0.0
  */
 
 import { createRequire } from 'node:module';

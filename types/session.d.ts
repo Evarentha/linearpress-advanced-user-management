@@ -1,9 +1,21 @@
 /*
- * Author: MoyuZJ
- * Team: LinearTeam
- * Contact: linearteam@foxmail.com
- * 独立模块类型自足：声明 req.session.userId（与 Base src/types/session.d.ts 保持一致，
- * 二者并存时类型合并不冲突）。
+ * Express Session Type Augmentation
+ *
+ * Declares req.session.userId so the plugin stays type-self-sufficient.
+ *
+ * Authors:
+ * MoyuZJ <moyuzj@moyuzj.cn> @LinearTeam - Made in China with ♥
+ *
+ * Copyright (C) 2026 Evarentha
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
+/**
+ * <p>Standalone-module type self-sufficiency: declares req.session.userId,
+ * kept consistent with Base src/types/session.d.ts so the two can coexist
+ * without conflicting type merges.</p>
+ *
+ * @since 1.0.0
  */
 
 import 'express-session';

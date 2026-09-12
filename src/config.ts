@@ -1,16 +1,26 @@
 /*
- * Author: MoyuZJ
- * Team: LinearTeam
- * Contact: linearteam@foxmail.com
- * Made by MoyuZJ in China with ♥
+ * Advanced User Management Configuration Model
+ *
+ * Configuration model for the Advanced User Management plugin, with defaults
+ * and shallow merging on top of the plugin registry.
+ *
+ * Authors:
+ * MoyuZJ <moyuzj@moyuzj.cn> @LinearTeam - Made in China with ♥
+ *
+ * Copyright (C) 2026 Evarentha
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
 /**
- * 高级用户管理插件配置模型。
+ * <p>Configuration model of the Advanced User Management plugin.</p>
  *
- * 配置整体以 JSON 保存在插件注册表（ctx.plugins.getConfig/setConfig），
- * 提供默认值 + 浅层合并，保证字段缺失时行为可预期。
- * 本模块不依赖 Base 内部实现，只依赖 cordis Context 暴露的 plugins 服务。
+ * <p>The whole configuration is stored as JSON in the plugin registry
+ * (ctx.plugins.getConfig/setConfig), with default values plus shallow
+ * merging so behavior stays predictable when fields are missing. This module
+ * does not depend on Base internal implementations; it only relies on the
+ * plugins service exposed by the cordis Context.</p>
+ *
+ * @since 1.0.0
  */
 
 /** 插件注册表配置服务的最小接口（由 ctx.plugins 满足）。 */

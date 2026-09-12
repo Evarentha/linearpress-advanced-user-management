@@ -1,14 +1,25 @@
 /*
- * Author: MoyuZJ
- * Team: LinearTeam
- * Contact: linearteam@foxmail.com
- * Made by MoyuZJ in China with ♥
+ * Account Deletion Workflow
+ *
+ * Business layer for account deletion requests: approval, cooldown, and the
+ * final physical deletion.
+ *
+ * Authors:
+ * MoyuZJ <moyuzj@moyuzj.cn> @LinearTeam - Made in China with ♥
+ *
+ * Copyright (C) 2026 Evarentha
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
 /**
- * 账号注销业务封装：
- *  用户提交申请 → 管理组批准 → 冷却期（默认 30 天，可配置）→ 系统自动物理注销。
- * 物理删除在 store.physicalDeleteUser 中按依赖顺序处理文章/评论/用户等。
+ * <p>Account deletion business layer: the user submits a request, the admin
+ * group approves it, a configurable cooldown period runs (30 days by
+ * default), and the system then performs the physical deletion.</p>
+ *
+ * <p>Physical deletion handles posts, comments, and the user record in
+ * dependency order inside store.physicalDeleteUser.</p>
+ *
+ * @since 1.0.0
  */
 
 import type { Db, DeleteRequestView } from './store.js';

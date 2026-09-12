@@ -1,12 +1,27 @@
 /*
- * Author: MoyuZJ
- * Team: LinearTeam
- * Contact: linearteam@foxmail.com
- * 高级用户管理 - 前端交互
- * 1) 注册表单密码二次确认实时校验
- * 2) 前台用户下拉菜单（头像/名字）
- * 3) 设置页：自定义模板文件上传填充、SMTP 测试请求
- * 4) 危险操作确认、AJAX 表单提示（data-aum-fetch / data-aum-confirm）
+ * Advanced User Management Frontend Script
+ *
+ * Client-side behaviors for AUM pages, forms, and menus.
+ *
+ * Authors:
+ * MoyuZJ <moyuzj@moyuzj.cn> @LinearTeam - Made in China with ♥
+ *
+ * Copyright (C) 2026 Evarentha
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
+/**
+ * <p>Advanced User Management front-end interactions:</p>
+ * <ol>
+ * <li>Live password-confirmation validation on the registration form.</li>
+ * <li>Front-end user dropdown menu (avatar / name).</li>
+ * <li>Settings page: custom template file-upload filling and the SMTP test
+ * request.</li>
+ * <li>Dangerous-action confirmation and AJAX form notices (data-aum-fetch /
+ * data-aum-confirm).</li>
+ * </ol>
+ *
+ * @since 1.0.0
  */
 
 (() => {
