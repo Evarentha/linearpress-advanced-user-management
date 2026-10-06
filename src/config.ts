@@ -1,11 +1,11 @@
 /*
  * Advanced User Management Configuration Model
  *
- * Configuration model for the Advanced User Management plugin, with defaults
- * and shallow merging on top of the plugin registry.
+ * Configuration model for the Advanced User Management plugin, with defaults and shallow merging on top of the plugin registry.
  *
  * Authors:
  * MoyuZJ <moyuzj@moyuzj.cn> @LinearTeam - Made in China with ♥
+ * worryzu <worryzu@gmail.com> @LinearTeam
  *
  * Copyright (C) 2026 Evarentha
  * SPDX-License-Identifier: GPL-3.0-or-later

@@ -1,11 +1,11 @@
 /*
  * Advanced User Management Plugin Entry
  *
- * Entry point of the Advanced User Management plugin, a native Cordis plugin
- * whose default export is the activate stage.
+ * Entry point of the Advanced User Management plugin, a native Cordis plugin whose default export is the activate stage.
  *
  * Authors:
  * MoyuZJ <moyuzj@moyuzj.cn> @LinearTeam - Made in China with ♥
+ * worryzu <worryzu@gmail.com> @LinearTeam
  *
  * Copyright (C) 2026 Evarentha
  * SPDX-License-Identifier: GPL-3.0-or-later
@@ -45,6 +45,7 @@ import { buildVerificationMail, isWhitelisted, providerUrl, sendVerificationMail
 import type { AumConfig } from './src/config.js';
 import { DEFAULT_TEMPLATE, loadConfig, normalizeConfig, parseSettingsForm, saveConfig } from './src/config.js';
 import { physicalDeleteUser, sweepExpired } from './src/store.js';
+import { regenerateSession } from './src/session.js';
 
 const PLUGIN_ID = 'advanced-user-management';
 const ADMIN_ROOT = '/admin/advanced-user-management';
@@ -176,7 +177,7 @@ export default async function advancedUserManagement(context: Context) {
     }
 
     // 重建会话防止 Session Fixation。
-    await new Promise<void>((resolve) => req.session.regenerate(() => resolve()));
+    await regenerateSession(req.session);
     req.session.userId = user.id;
     res.redirect('/admin');
   });

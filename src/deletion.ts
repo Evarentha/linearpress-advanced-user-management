@@ -1,11 +1,11 @@
 /*
  * Account Deletion Workflow
  *
- * Business layer for account deletion requests: approval, cooldown, and the
- * final physical deletion.
+ * Business layer for account deletion requests: approval, cooldown, and the final physical deletion.
  *
  * Authors:
  * MoyuZJ <moyuzj@moyuzj.cn> @LinearTeam - Made in China with ♥
+ * worryzu <worryzu@gmail.com> @LinearTeam
  *
  * Copyright (C) 2026 Evarentha
  * SPDX-License-Identifier: GPL-3.0-or-later
